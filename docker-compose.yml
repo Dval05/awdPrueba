@@ -1,0 +1,47 @@
+services:
+  # Servicio de la aplicación web PHP
+  web:
+    build: .
+    container_name: nicekids-web
+    ports:
+      - "8080:80"
+    environment:
+      - MYSQL_ADDON_HOST=db
+      - MYSQL_ADDON_DB=nicekids1
+      - MYSQL_ADDON_USER=nicekids_user
+      - MYSQL_ADDON_PASSWORD=nicekids_pass
+      - MYSQL_ADDON_PORT=3306
+    volumes:
+      # Montar el código fuente para desarrollo (comentar en producción)
+      - .:/var/www/html
+    depends_on:
+      - db
+    networks:
+      - nicekids-network
+    restart: unless-stopped
+
+  # Servicio de base de datos MySQL
+  db:
+    image: mysql:5.7
+    container_name: nicekids-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_password
+      - MYSQL_DATABASE=nicekids1
+      - MYSQL_USER=nicekids_user
+      - MYSQL_PASSWORD=nicekids_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      # Persistir datos de la base de datos
+      - mysql-data:/var/lib/mysql
+    networks:
+      - nicekids-network
+    restart: unless-stopped
+
+networks:
+  nicekids-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
+    driver: local
