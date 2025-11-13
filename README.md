@@ -2,7 +2,21 @@
 
 Sistema web para la gestión integral de guarderías incluyendo estudiantes, asistencia, pagos y más.
 
-## Despliegue en Render
+## Opciones de Despliegue
+
+### Opción 1: Docker (Recomendado para desarrollo local)
+
+Este proyecto incluye soporte completo para Docker. Consulta [DOCKER.md](DOCKER.md) para instrucciones detalladas.
+
+**Inicio rápido con Docker:**
+```bash
+# Iniciar la aplicación y base de datos
+docker compose up -d
+
+# La aplicación estará disponible en http://localhost:8080
+```
+
+### Opción 2: Despliegue en Render
 
 Este proyecto está configurado para desplegarse en Render.com con base de datos MySQL en Clever Cloud.
 
@@ -19,7 +33,7 @@ Este proyecto está configurado para desplegarse en Render.com con base de datos
 
 4. Render detectará automáticamente el archivo `render.yaml` y configurará el servicio
 
-### Desarrollo Local
+### Opción 3: Desarrollo Local sin Docker
 
 1. Copia `.env.example` a `.env`:
    ```bash
