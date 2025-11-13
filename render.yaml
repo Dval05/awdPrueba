@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: nicekids-app
+    runtime: php
+    buildCommand: composer install --no-dev
+    startCommand: php -S 0.0.0.0:$PORT -t .
+    envVars:
+      - key: MYSQL_ADDON_HOST
+        value: bgugearxrbakootubsyl-mysql.services.clever-cloud.com
+      - key: MYSQL_ADDON_DB
+        value: bgugearxrbakootubsyl
+      - key: MYSQL_ADDON_USER
+        value: u9icnkoqpjazwzdb
+      - key: MYSQL_ADDON_PORT
+        value: 3306
+      - key: MYSQL_ADDON_PASSWORD
+        sync: false  # This should be set in Render dashboard for security
+
