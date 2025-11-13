@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: awdprueba
+    runtime: php
+    env: php
+    buildCommand: composer install --no-dev --optimize-autoloader 2>/dev/null || echo "No composer dependencies"
+    startCommand: |
+      if [ -f /usr/sbin/apache2 ]; then
+        apache2-foreground
+      else
+        php -S 0.0.0.0:$PORT -t .
+      fi
+    envVars:
+      - key: MYSQL_ADDON_HOST
+        value: bgugearxrbakootubsyl-mysql.services.clever-cloud.com
+      - key: MYSQL_ADDON_DB
+        value: bgugearxrbakootubsyl
+      - key: MYSQL_ADDON_USER
+        value: u9icnkoqpjazwzdb
+      - key: MYSQL_ADDON_PASSWORD
+        sync: false
+        # Configura esto en el dashboard de Render por seguridad
+      - key: MYSQL_ADDON_PORT
+        value: 3306
+    healthCheckPath: /
