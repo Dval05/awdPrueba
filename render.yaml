@@ -18,8 +18,8 @@ services:
       - key: MYSQL_ADDON_USER
         value: u9icnkoqpjazwzdb
       - key: MYSQL_ADDON_PASSWORD
-        sync: false
-        # Configura esto en el dashboard de Render por seguridad
+        value: phSXIq897qAaZQMzDhu0
       - key: MYSQL_ADDON_PORT
         value: 3306
     healthCheckPath: /
+
