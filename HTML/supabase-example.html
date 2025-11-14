@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejemplo Supabase - NICEKIDS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        header {
+            background: #667eea;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        header h1 {
+            margin-bottom: 10px;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #5568d3;
+        }
+        
+        button:active {
+            transform: scale(0.98);
+        }
+        
+        .status {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .results {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .results pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 13px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Ejemplo de Integración Supabase</h1>
+            <p>NICEKIDS - Gestión de Guardería</p>
+        </header>
+        
+        <div class="content">
+            <!-- Estado de Conexión -->
+            <div class="section">
+                <h2>📡 Estado de Conexión</h2>
+                <div id="connectionStatus" class="status info">
+                    Inicializando conexión a Supabase...
+                </div>
+            </div>
+            
+            <!-- Autenticación -->
+            <div class="section">
+                <h2>🔐 Autenticación</h2>
+                <div class="grid">
+                    <div>
+                        <h3>Registro</h3>
+                        <div class="form-group">
+                            <label>Email:</label>
+                            <input type="email" id="signupEmail" placeholder="usuario@ejemplo.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Contraseña:</label>
+                            <input type="password" id="signupPassword" placeholder="mínimo 6 caracteres">
+                        </div>
+                        <button onclick="registrarUsuario()">Registrar</button>
+                    </div>
+                    
+                    <div>
+                        <h3>Inicio de Sesión</h3>
+                        <div class="form-group">
+                            <label>Email:</label>
+                            <input type="email" id="loginEmail" placeholder="usuario@ejemplo.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Contraseña:</label>
+                            <input type="password" id="loginPassword">
+                        </div>
+                        <button onclick="iniciarSesion()">Iniciar Sesión</button>
+                    </div>
+                </div>
+                
+                <div class="button-group" style="margin-top: 20px;">
+                    <button onclick="obtenerUsuarioActual()">Ver Usuario Actual</button>
+                    <button onclick="cerrarSesion()">Cerrar Sesión</button>
+                </div>
+            </div>
+            
+            <!-- Operaciones CRUD -->
+            <div class="section">
+                <h2>📋 Operaciones CRUD - Estudiantes</h2>
+                <div class="button-group">
+                    <button onclick="obtenerEstudiantes()">📖 Listar Estudiantes</button>
+                    <button onclick="crearEstudianteEjemplo()">➕ Crear Estudiante</button>
+                    <button onclick="actualizarPrimerEstudiante()">✏️ Actualizar Primer Estudiante</button>
+                    <button onclick="contarEstudiantes()">🔢 Contar Estudiantes</button>
+                </div>
+                
+                <h3 style="margin-top: 20px;">Crear Estudiante Personalizado</h3>
+                <div class="grid">
+                    <div class="form-group">
+                        <label>Nombre:</label>
+                        <input type="text" id="firstName" placeholder="Juan">
+                    </div>
+                    <div class="form-group">
+                        <label>Apellido:</label>
+                        <input type="text" id="lastName" placeholder="Pérez">
+                    </div>
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="email" id="email" placeholder="juan@ejemplo.com">
+                    </div>
+                    <div class="form-group">
+                        <label>ID Grado:</label>
+                        <input type="number" id="gradeId" placeholder="1">
+                    </div>
+                </div>
+                <button onclick="crearEstudiantePersonalizado()">Crear Estudiante</button>
+            </div>
+            
+            <!-- Consultas Avanzadas -->
+            <div class="section">
+                <h2>🔍 Consultas Avanzadas</h2>
+                <div class="button-group">
+                    <button onclick="buscarEstudiantesActivos()">Estudiantes Activos</button>
+                    <button onclick="buscarPorGrado()">Buscar por Grado 1</button>
+                    <button onclick="ordenarPorApellido()">Ordenar por Apellido</button>
+                    <button onclick="buscarPorEmail()">Buscar por Email</button>
+                </div>
+            </div>
+            
+            <!-- Resultados -->
+            <div class="section">
+                <h2>📊 Resultados</h2>
+                <div id="results" class="results">
+                    <pre>Los resultados aparecerán aquí...</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Cargar Supabase desde CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Inicializar cliente Supabase
+        const supabase = window.supabase.createClient(
+            'https://dkfissjbxaevmxcqvpai.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRrZmlzc2pieGFldm14Y3F2cGFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMwNzQ3NjIsImV4cCI6MjA3ODY1MDc2Mn0.jvhYLRPvgkOa-Yx4So9-b3MfouLoRl9f-iHgkldxEcI'
+        );
+        
+        // Función para mostrar resultados
+        function mostrarResultado(data, tipo = 'success') {
+            const resultsDiv = document.getElementById('results');
+            const statusClass = tipo === 'error' ? 'error' : 'success';
+            resultsDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            
+            // Scroll automático
+            resultsDiv.scrollTop = 0;
+        }
+        
+        // Función para mostrar estado de conexión
+        function mostrarEstadoConexion(mensaje, tipo = 'success') {
+            const statusDiv = document.getElementById('connectionStatus');
+            statusDiv.className = `status ${tipo}`;
+            statusDiv.textContent = mensaje;
+        }
+        
+        // Verificar conexión inicial
+        (async function verificarConexion() {
+            try {
+                // Intentar una consulta simple
+                const { error } = await supabase.from('student').select('count', { count: 'exact', head: true });
+                
+                if (error) {
+                    mostrarEstadoConexion('⚠️ Conectado a Supabase, pero hay un problema con la tabla: ' + error.message, 'error');
+                } else {
+                    mostrarEstadoConexion('✅ Conectado exitosamente a Supabase', 'success');
+                }
+            } catch (e) {
+                mostrarEstadoConexion('❌ Error de conexión: ' + e.message, 'error');
+            }
+        })();
+        
+        // ========== AUTENTICACIÓN ==========
+        
+        async function registrarUsuario() {
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            
+            if (!email || !password) {
+                mostrarResultado({ error: 'Email y contraseña son requeridos' }, 'error');
+                return;
+            }
+            
+            const { data, error } = await supabase.auth.signUp({
+                email: email,
+                password: password
+            });
+            
+            if (error) {
+                mostrarResultado({ error: error.message }, 'error');
+            } else {
+                mostrarResultado({ 
+                    mensaje: 'Usuario registrado exitosamente',
+                    usuario: data.user,
+                    session: data.session ? 'Sesión creada' : 'Verificación de email requerida'
+                }, 'success');
+            }
+        }
+        
+        async function iniciarSesion() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                mostrarResultado({ error: 'Email y contraseña son requeridos' }, 'error');
+                return;
+            }
+            
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+            
+            if (error) {
+                mostrarResultado({ error: error.message }, 'error');
+            } else {
+                mostrarResultado({ 
+                    mensaje: 'Sesión iniciada exitosamente',
+                    usuario: data.user,
+                    token: data.session.access_token.substring(0, 50) + '...'
+                }, 'success');
+                mostrarEstadoConexion('✅ Usuario autenticado: ' + data.user.email, 'success');
+            }
+        }
+        
+        async function obtenerUsuarioActual() {
+            const { data: { user } } = await supabase.auth.getUser();
+            
+            if (user) {
+                mostrarResultado({ 
+                    mensaje: 'Usuario actual',
+                    usuario: user
+                }, 'success');
+            } else {
+                mostrarResultado({ mensaje: 'No hay usuario autenticado' }, 'info');
+            }
+        }
+        
+        async function cerrarSesion() {
+            const { error } = await supabase.auth.signOut();
+            
+            if (error) {
+                mostrarResultado({ error: error.message }, 'error');
+            } else {
+                mostrarResultado({ mensaje: 'Sesión cerrada exitosamente' }, 'success');
+                mostrarEstadoConexion('✅ Conectado a Supabase (sin autenticar)', 'info');
+            }
+        }
+        
+        // ========== OPERACIONES CRUD ==========
+        
+        async function obtenerEstudiantes() {
+            const { data, error } = await supabase
+                .from('student')
+                .select('*')
+                .limit(10);
+            
+            if (error) {
+                mostrarResultado({ error: error.message }, 'error');
+            } else {
+                mostrarResultado({ 
+                    mensaje: `Se encontraron ${data.length} estudiantes`,
+                    estudiantes: data
+                }, 'success');
+            }
+        }
+        
+        async function crearEstudianteEjemplo() {
+            const { data, error } = await supabase
+                .from('student')
+                .insert({
+                    FirstName: 'María',
+                    LastName: 'González',
+                    Email: 'maria.gonzalez@ejemplo.com',
+                    GradeID: 1
+                })
+                .select();
+            
+            if (error) {
+                mostrarResultado({ error: error.message }, 'error');
+            } else {
+                mostrarResultado({ 
+                    mensaje: 'Estudiante creado exitosamente',
+                    estudiante: data[0]
+                }, 'success');
+            }
+        }
+        
+        async function crearEstudiantePersonalizado() {
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const email = document.getElementById('email').value;
+            const gradeId = document.getElementById('gradeId').value;
+            
+            if (!firstName || !lastName) {
+                mostrarResultado({ error: 'Nombre y apellido son requeridos' }, 'error');
+                return;
+            }
+            
+            const { data, error } = await supabase
+                .from('student')
+                .insert({
+                    FirstName: firstName,
+                    LastName: lastName,
+                    Email: email || null,
+                    GradeID: gradeId || null
+                })
+                .select();
+            
+            if (error) {
+                mostrarResultado({ error: error.message }, 'error');
+            } else {
+                mostrarResultado({ 
+                    mensaje: 'Estudiante creado exitosamente',
+                    estudiante: data[0]
+                }, 'success');
+                
+                // Limpiar formulario
+                document.getElementById('firstName').value = '';
+                document.getElementById('lastName').value = '';
+                document.getElementById('email').value = '';
+                document.getElementById('gradeId').value = '';
+            }
+        }
+        
+        async function actualizarPrimerEstudiante() {
+            // Primero obtenemos el primer estudiante
+            const { data: estudiantes, error: errorBuscar } = await supabase
+                .from('student')
+                .select('StudentID')
+                .limit(1);
+            
+            if (errorBuscar || !estudiantes || estudiantes.length === 0) {
+                mostrarResultado({ error: 'No se encontraron estudiantes para actualizar' }, 'error');
+                return;
+            }
+            
+            const studentId = estudiantes[0].StudentID;
+            
+            // Actualizar
+            const { data, error } = await supabase
+                .from('student')
+                .update({ 
+                    Email: 'actualizado_' + Date.now() + '@ejemplo.com',
+                    IsActive: true
+                })
+                .eq('StudentID', studentId)
+                .select();
+            
+            if (error) {
+                mostrarResultado({ error: error.message }, 'error');
+            } else {
+                mostrarResultado({ 
+                    mensaje: 'Estudiante actualizado exitosamente',
+                    estudiante: data[0]
+                }, 'success');
+            }
+        }
+        
+        async function contarEstudiantes() {
+            const { count, error } = await supabase
+                .from('student')
+                .select('*', { count: 'exact', head: true });
+            
+            if (error) {
+                mostrarResultado({ error: error.message }, 'error');
+            } else {
+                mostrarResultado({ 
+                    mensaje: 'Total de estudiantes en la base de datos',
+                    total: count
+                }, 'success');
+            }
+        }
+        
+        // ========== CONSULTAS AVANZADAS ==========
+        
+        async function buscarEstudiantesActivos() {
+            const { data, error } = await supabase
+                .from('student')
+                .select('*')
+                .eq('IsActive', true)
+                .limit(10);
+            
+            if (error) {
+                mostrarResultado({ error: error.message }, 'error');
+            } else {
+                mostrarResultado({ 
+                    mensaje: `Estudiantes activos: ${data.length}`,
+                    estudiantes: data
+                }, 'success');
+            }
+        }
+        
+        async function buscarPorGrado() {
+            const { data, error } = await supabase
+                .from('student')
+                .select('*')
+                .eq('GradeID', 1)
+                .limit(10);
+            
+            if (error) {
+                mostrarResultado({ error: error.message }, 'error');
+            } else {
+                mostrarResultado({ 
+                    mensaje: `Estudiantes en Grado 1: ${data.length}`,
+                    estudiantes: data
+                }, 'success');
+            }
+        }
+        
+        async function ordenarPorApellido() {
+            const { data, error } = await supabase
+                .from('student')
+                .select('*')
+                .order('LastName', { ascending: true })
+                .limit(10);
+            
+            if (error) {
+                mostrarResultado({ error: error.message }, 'error');
+            } else {
+                mostrarResultado({ 
+                    mensaje: `Estudiantes ordenados por apellido`,
+                    estudiantes: data
+                }, 'success');
+            }
+        }
+        
+        async function buscarPorEmail() {
+            const { data, error } = await supabase
+                .from('student')
+                .select('*')
+                .not('Email', 'is', null)
+                .limit(10);
+            
+            if (error) {
+                mostrarResultado({ error: error.message }, 'error');
+            } else {
+                mostrarResultado({ 
+                    mensaje: `Estudiantes con email: ${data.length}`,
+                    estudiantes: data
+                }, 'success');
+            }
+        }
+    </script>
+</body>
+</html>

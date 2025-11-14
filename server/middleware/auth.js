@@ -1,19 +1,7 @@
-const { createClient } = require('@supabase/supabase-js');
-
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-let supabase = null;
-if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
-  supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
-    auth: { autoRefreshToken: false, persistSession: false },
-  });
-} else {
-  console.warn('Supabase credentials not set. Auth middleware will allow all requests.');
-}
+const { supabaseAdmin } = require('../supabase');
 
 async function authMiddleware(req, res, next) {
-  if (!supabase) {
+  if (!supabaseAdmin) {
     return next();
   }
   const auth = req.headers['authorization'] || '';
@@ -23,7 +11,7 @@ async function authMiddleware(req, res, next) {
     return res.status(401).json({ error: 'Missing Authorization header' });
   }
   try {
-    const { data, error } = await supabase.auth.getUser(token);
+    const { data, error } = await supabaseAdmin.auth.getUser(token);
     if (error || !data?.user) {
       return res.status(401).json({ error: 'Invalid token' });
     }

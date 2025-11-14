@@ -18,6 +18,9 @@ app.get('/api/health', (req, res) => {
 // Avoid favicon 404 noise
 app.get('/favicon.ico', (req, res) => res.status(204).end());
 
+// Supabase examples (no auth required for demo)
+app.use('/api/supabase-examples', require('./routes/supabase-examples'));
+
 // Mount routes (students will be added later)
 app.use('/api/students', require('./routes/students'));
 app.use('/api/dashboard', require('./routes/dashboard'));
