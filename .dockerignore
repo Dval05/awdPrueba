@@ -1,0 +1,13 @@
+node_modules
+npm-debug.log
+Dockerfile*
+.git
+.gitignore
+README.md
+scss
+PHP
+tools/schema_postgres.sql
+tools/supabase_policies.sql
+tools/supabase.sql
+*.md
+vendor/**/examples

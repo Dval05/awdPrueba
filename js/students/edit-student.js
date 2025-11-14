@@ -8,7 +8,7 @@ $(function(){
 
   // Cargar datos del alumno en el formulario
   if(studentId && !isNaN(studentId)){
-    $.get(API_BASE_URL + "/students/get_by_id.php?id=" + studentId, function(resp){
+    $.get(API_BASE_URL + "/students/" + studentId, function(resp){
       if(resp.success && resp.data){
         let s = resp.data;
         $("#firstName").val(s.FirstName || "");
@@ -42,7 +42,7 @@ $(function(){
     e.preventDefault();
 
     const data = {
-      StudentID: studentId,
+      // StudentID se obtiene de la ruta ahora
       FirstName: $("#firstName").val(),
       LastName: $("#lastName").val(),
       BirthDate: $("#birthDate").val(),
@@ -61,8 +61,8 @@ $(function(){
     };
 
     $.ajax({
-      url: API_BASE_URL + "/students/update.php",
-      method: "POST",
+      url: API_BASE_URL + "/students/" + studentId,
+      method: "PUT",
       contentType: "application/json",
       data: JSON.stringify(data),
       success: function(resp){

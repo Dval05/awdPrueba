@@ -75,8 +75,13 @@ END $$;
 DO $$ BEGIN
   IF EXISTS (SELECT 1 FROM pg_tables WHERE schemaname='public' AND tablename='notification') THEN
     CREATE POLICY IF NOT EXISTS "notification_select_receiver" ON notification
-      FOR SELECT TO authenticated USING (auth.uid()::text IS NOT NULL AND TRUE);
-    -- NOTE: Adapt this to your auth <-> user mapping if you link auth.users to public.user
+      FOR SELECT TO authenticated USING (
+        EXISTS (
+          SELECT 1 FROM "user" u
+          WHERE u."UserID" = notification."ReceiverID"
+            AND u."AuthUserID" = auth.uid()
+        )
+      );
   END IF;
 END $$;
 

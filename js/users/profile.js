@@ -26,7 +26,7 @@ $(function(){
 	// Load profile (session-based) then attempt to resolve role via get_all
 	function loadProfile(){
 		$.ajax({
-			url: API_BASE_URL + '/users/get_profile.php',
+			url: API_BASE_URL + '/users/profile',
 			method: 'GET',
 			dataType: 'json'
 		}).done(function(res){
@@ -40,9 +40,9 @@ $(function(){
 			// res is the user object
 			showProfile(res);
 
-			// try to fetch roles via users/get_all.php to find current role name
+			// try to fetch roles via /users to find current role name
 			$.ajax({
-				url: API_BASE_URL + '/users/get_all.php',
+				url: API_BASE_URL + '/users',
 				method: 'GET',
 				dataType: 'json'
 			}).done(function(list){
@@ -75,7 +75,7 @@ $(function(){
 		alert('Funcionalidad de edición aún no implementada');
 	});
 
-	// Change password handler (calls PHP/users/change_password.php)
+	// Change password handler (REST /users/change-password)
 	$('#changePasswordForm').on('submit', function(e){
 		e.preventDefault();
 		const current = $('#currentPassword').val();
@@ -85,7 +85,7 @@ $(function(){
 		if(nw !== conf){ alert('Las contraseñas no coinciden'); return; }
 
 		$.ajax({
-			url: API_BASE_URL + '/users/change_password.php',
+			url: API_BASE_URL + '/users/change-password',
 			method: 'POST',
 			data: { currentPassword: current, newPassword: nw },
 			dataType: 'json'

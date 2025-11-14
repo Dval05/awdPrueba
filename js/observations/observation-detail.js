@@ -5,7 +5,7 @@ $(function(){
 
   // Cargar estudiantes
   function loadStudents(selectedId) {
-    $.get("../../php/students/get_all.php", function(resp){
+    $.get(API_BASE_URL+"/students", function(resp){
       let html = `<option value="">-- Seleccione --</option>`;
       if(resp.success && Array.isArray(resp.data)){
         resp.data.forEach(s=>{
@@ -19,7 +19,7 @@ $(function(){
 
   // Cargar docentes
   function loadTeachers(selectedId) {
-    $.get("../../php/employees/get_all.php", function(resp){
+    $.get(API_BASE_URL+"/employees", function(resp){
       let html = `<option value="">-- Seleccione --</option>`;
       if(resp.success && Array.isArray(resp.data)){
         resp.data.forEach(t=>{
@@ -34,7 +34,7 @@ $(function(){
   // Si es edición: cargar datos y llenar
   function loadObservationDetail(){
     if(!obsId) return;
-    $.get("../../php/observations/get_all.php", function(resp){
+    $.get(API_BASE_URL+"/observations", function(resp){
       if(resp.success && Array.isArray(resp.data)){
         const ob = resp.data.find(o=>o.ObservationID==obsId);
         if(ob){
@@ -77,8 +77,8 @@ $(function(){
     if(obsId) data.ObservationID = obsId;
 
     let url = obsId 
-      ? "../../php/observations/update.php" 
-      : "../../php/observations/create.php";
+      ? API_BASE_URL+"/observations/update" 
+      : API_BASE_URL+"/observations/create";
 
     $.ajax({
       url: url,

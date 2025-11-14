@@ -1,6 +1,6 @@
 $(function(){
   requireAuth();
-  $.get(API_BASE_URL+"/payments/teacher/get_all.php",function(r){
+  $.get(API_BASE_URL+"/payments/teacher",function(r){
     let b="";
     if(r.success&&r.data.length){
       r.data.forEach(p=>{

@@ -444,6 +444,108 @@ CREATE INDEX IF NOT EXISTS idx_user_active ON "user" ("IsActive");
 CREATE INDEX IF NOT EXISTS idx_user_role_role ON user_role ("RoleID");
 CREATE INDEX IF NOT EXISTS idx_user_role_assigned_by ON user_role ("AssignedBy");
 
+-- ============= SUPABASE AUTH INTEGRATION =============
+-- Map Supabase auth.users (UUID) to public."user" via "AuthUserID"
+-- and keep basic fields in sync. This enables using Supabase Auth on the frontend
+-- while preserving existing integer-based relations in the current schema.
+
+-- Make PasswordHash optional (Auth manages passwords)
+ALTER TABLE "user" ALTER COLUMN "PasswordHash" DROP NOT NULL;
+
+-- Add AuthUserID UUID link if missing
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema='public' AND table_name='user' AND column_name='AuthUserID'
+  ) THEN
+    ALTER TABLE "user" ADD COLUMN "AuthUserID" uuid UNIQUE;
+  END IF;
+END $$;
+
+-- Function: on new auth user, upsert into public.user
+CREATE OR REPLACE FUNCTION public.handle_new_auth_user()
+RETURNS trigger AS $$
+DECLARE
+  v_username text;
+BEGIN
+  -- Derive username from email prefix if possible
+  v_username := COALESCE(NULLIF(split_part(NEW.email, '@', 1), ''), NEW.id::text);
+
+  INSERT INTO public."user" ("UserName","Email","FirstName","LastName","IsActive","AuthUserID","CreatedAt")
+  VALUES (v_username, NEW.email, NULL, NULL, 1, NEW.id, now())
+  ON CONFLICT ("Email") DO UPDATE SET
+    "AuthUserID" = EXCLUDED."AuthUserID",
+    "UpdatedAt" = now();
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Function: on auth user delete, mark user inactive
+CREATE OR REPLACE FUNCTION public.handle_delete_auth_user()
+RETURNS trigger AS $$
+BEGIN
+  UPDATE public."user"
+     SET "IsActive" = 0,
+         "UpdatedAt" = now()
+   WHERE "AuthUserID" = OLD.id;
+  RETURN OLD;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Function: on auth user email change, sync email to public.user
+CREATE OR REPLACE FUNCTION public.handle_update_auth_user_email()
+RETURNS trigger AS $$
+BEGIN
+  IF NEW.email IS DISTINCT FROM OLD.email THEN
+    UPDATE public."user"
+       SET "Email" = NEW.email,
+           "UpdatedAt" = now()
+     WHERE "AuthUserID" = NEW.id;
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Triggers on auth.users
+DO $$ BEGIN
+  -- After INSERT: create/sync public.user row
+  IF EXISTS (SELECT 1 FROM pg_namespace WHERE nspname='auth') THEN
+    -- Drop pre-existing triggers to keep idempotency
+    IF EXISTS (
+      SELECT 1 FROM pg_trigger t JOIN pg_class c ON c.oid=t.tgrelid JOIN pg_namespace n ON n.oid=c.relnamespace
+      WHERE t.tgname='trg_auth_user_created' AND n.nspname='auth' AND c.relname='users'
+    ) THEN
+      DROP TRIGGER trg_auth_user_created ON auth.users;
+    END IF;
+    CREATE TRIGGER trg_auth_user_created
+      AFTER INSERT ON auth.users
+      FOR EACH ROW EXECUTE FUNCTION public.handle_new_auth_user();
+
+    -- After DELETE: mark inactive in public.user
+    IF EXISTS (
+      SELECT 1 FROM pg_trigger t JOIN pg_class c ON c.oid=t.tgrelid JOIN pg_namespace n ON n.oid=c.relnamespace
+      WHERE t.tgname='trg_auth_user_deleted' AND n.nspname='auth' AND c.relname='users'
+    ) THEN
+      DROP TRIGGER trg_auth_user_deleted ON auth.users;
+    END IF;
+    CREATE TRIGGER trg_auth_user_deleted
+      AFTER DELETE ON auth.users
+      FOR EACH ROW EXECUTE FUNCTION public.handle_delete_auth_user();
+
+    -- After UPDATE (email): sync email
+    IF EXISTS (
+      SELECT 1 FROM pg_trigger t JOIN pg_class c ON c.oid=t.tgrelid JOIN pg_namespace n ON n.oid=c.relnamespace
+      WHERE t.tgname='trg_auth_user_updated' AND n.nspname='auth' AND c.relname='users'
+    ) THEN
+      DROP TRIGGER trg_auth_user_updated ON auth.users;
+    END IF;
+    CREATE TRIGGER trg_auth_user_updated
+      AFTER UPDATE OF email ON auth.users
+      FOR EACH ROW EXECUTE FUNCTION public.handle_update_auth_user_email();
+  END IF;
+END $$;
+
 -- ============= TRIGGERS =============
 -- Generic updated_at trigger
 CREATE OR REPLACE FUNCTION set_updated_at() RETURNS trigger AS $$

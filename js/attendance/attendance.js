@@ -1,6 +1,6 @@
 $(function(){
   requireAuth();
-  $.get(API_BASE_URL+"/attendance/get_all.php",function(r){
+  $.get(API_BASE_URL+"/attendance",function(r){
     let b="";
     if(r.success&&r.data.length){
       r.data.forEach(a=>{

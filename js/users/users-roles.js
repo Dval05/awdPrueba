@@ -16,7 +16,7 @@ $(function(){
   // Load users and roles into the tables
   function loadUsers(){
     $.ajax({
-      url: API_BASE_URL+"/users/get_all.php",
+      url: API_BASE_URL+"/users",
       method: 'GET',
       dataType: 'json',
       headers: {
@@ -64,7 +64,7 @@ $(function(){
   function loadRoles(){
     // return the promise so callers can chain when roles are ready
     return $.ajax({
-      url: API_BASE_URL+"/roles/get_all.php",
+      url: API_BASE_URL+"/roles",
       method: 'GET',
       dataType: 'json',
       headers: {
@@ -112,7 +112,7 @@ $(function(){
   // Open select-user modal and populate table
   function loadUsersForModal(){
     $.ajax({
-      url: API_BASE_URL+"/users/get_all.php",
+      url: API_BASE_URL+"/users",
       method: 'GET',
       dataType: 'json',
       headers: {
@@ -192,7 +192,7 @@ $(function(){
     btn.prop('disabled', true).text('Asignando...');
 
     $.ajax({
-      url: API_BASE_URL + '/roles/assign_to_user.php',
+      url: API_BASE_URL + '/roles/assign',
       method: 'POST',
       data: { UserID: userId, RoleID: selectedRole },
       dataType: 'json',
@@ -253,7 +253,7 @@ $(function(){
 
     // submit
     $.ajax({
-      url: API_BASE_URL + '/users/create.php',
+      url: API_BASE_URL + '/users',
       method: 'POST',
       data: data,
       dataType: 'json',

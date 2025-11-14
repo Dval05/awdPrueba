@@ -21,6 +21,17 @@ app.get('/favicon.ico', (req, res) => res.status(204).end());
 // Mount routes (students will be added later)
 app.use('/api/students', require('./routes/students'));
 app.use('/api/dashboard', require('./routes/dashboard'));
+app.use('/api/grades', require('./routes/grades'));
+app.use('/api/employees', require('./routes/employees'));
+app.use('/api/guardians', require('./routes/guardians'));
+app.use('/api/activities', require('./routes/activities'));
+app.use('/api/observations', require('./routes/observations'));
+app.use('/api/attendance', require('./routes/attendance'));
+app.use('/api/users', require('./routes/users'));
+app.use('/api/roles', require('./routes/roles'));
+app.use('/api/permissions', require('./routes/permissions'));
+app.use('/api/payments', require('./routes/payments'));
+app.use('/api/invoices', require('./routes/invoices'));
 
 // 404 fallback for API
 app.use('/api', (req, res) => {

@@ -109,7 +109,7 @@
 
     async function loadGrades(){
       try{
-        const res = await fetch('../../PHP/attendance/grades.php');
+        const res = await fetch((window.__ENV?.API_BASE_URL||'/api') + '/grades');
         const js = await res.json();
         gradeSelect.innerHTML = '<option value="">-- Todos --</option>';
         js.forEach(g=>{ const o=document.createElement('option'); o.value=g.GradeID; o.textContent=g.GradeName; gradeSelect.appendChild(o); });
@@ -123,7 +123,7 @@
       if (startDate.value) params.append('startDate', startDate.value);
       if (endDate.value) params.append('endDate', endDate.value);
       try{
-        const res = await fetch(`../../PHP/attendance/view.php?${params.toString()}`);
+        const res = await fetch((window.__ENV?.API_BASE_URL||'/api') + `/attendance/get_by_date?${params.toString()}`);
         if(!res.ok) throw new Error('Error cargando vista');
         const data = await res.json();
         render(data);

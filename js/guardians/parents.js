@@ -32,10 +32,11 @@ $(function(){
       IsEmergencyContact: $("#IsEmergencyContact").is(":checked") ? 1 : 0,
       IsAuthorizedPickup: $("#IsAuthorizedPickup").is(":checked") ? 1 : 0
     };
-    let url = API_BASE_URL + "/guardians/" + (data.GuardianID ? "update.php" : "create.php");
+    let url = API_BASE_URL + "/guardians" + (data.GuardianID ? "/"+data.GuardianID : "");
+    let method = data.GuardianID ? "PUT" : "POST";
     $.ajax({
       url: url,
-      method: "POST",
+      method: method,
       contentType: "application/json",
       data: JSON.stringify(data),
       success: function(resp){
@@ -52,7 +53,7 @@ $(function(){
   });
 
   function loadGuardians(){
-    $.get(API_BASE_URL + "/guardians/get_all.php", function(resp){
+    $.get(API_BASE_URL + "/guardians", function(resp){
       let b = "";
       if(resp.success && Array.isArray(resp.data) && resp.data.length){
         resp.data.forEach(g => {
@@ -76,7 +77,7 @@ $(function(){
 
       $(".btn-edit").click(function(){
         let id = $(this).data("id");
-        $.get(API_BASE_URL + "/guardians/get_all.php", function(resp){
+        $.get(API_BASE_URL + "/guardians", function(resp){
           let g = (resp.data || []).find(o=>o.GuardianID==id);
           if(g){
             $("#GuardianID").val(g.GuardianID);

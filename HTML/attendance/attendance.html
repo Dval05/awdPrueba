@@ -204,16 +204,16 @@
        });
      });
 
-     async function loadGrades(){
+      async function loadGrades(){
        try{
-        const res = await fetch('../../PHP/attendance/grades.php', { cache: 'no-store' });
+        const res = await fetch((window.__ENV?.API_BASE_URL||'/api') + '/grades', { cache: 'no-store' });
         // Leer como texto primero to avoid "Unexpected token '<'" if server returned HTML (errors/warnings)
         const text = await res.text();
         let grades;
         try {
           grades = JSON.parse(text);
         } catch (parseErr) {
-          console.error('Respuesta no JSON desde grades.php:', text);
+          console.error('Respuesta no JSON desde grades endpoint:', text);
           throw new Error('Error cargando grados: respuesta inválida del servidor');
         }
         if (!res.ok) {
@@ -241,10 +241,10 @@
       tbody.innerHTML = '<tr><td colspan="9">Cargando...</td></tr>';
       try{
   // Llamar al endpoint PHP en server side y pasar la fecha para precargar asistencia
-  const res = await fetch(`../../PHP/attendance/students.php?gradeId=${encodeURIComponent(gradeId)}&date=${encodeURIComponent(dateInput.value)}`, { cache: 'no-store' });
+  const res = await fetch(`${(window.__ENV?.API_BASE_URL||'/api')}/attendance/students?gradeId=${encodeURIComponent(gradeId)}&date=${encodeURIComponent(dateInput.value)}`, { cache: 'no-store' });
         const text = await res.text();
         let students;
-        try { students = JSON.parse(text); } catch(err) { console.error('Respuesta no JSON de students.php:', text); throw new Error('Error cargando estudiantes: respuesta inválida'); }
+        try { students = JSON.parse(text); } catch(err) { console.error('Respuesta no JSON del students endpoint:', text); throw new Error('Error cargando estudiantes: respuesta inválida'); }
         if (!res.ok) {
           const msg = students && students.message ? students.message : 'Error cargando estudiantes';
           throw new Error(msg);
@@ -393,7 +393,7 @@
       }
 
        try{
-        const res = await fetch('../../PHP/attendance/attendance_save.php', {
+        const res = await fetch((window.__ENV?.API_BASE_URL||'/api') + '/attendance/save', {
            method: 'POST',
            headers: { 'Content-Type': 'application/json' },
            body: JSON.stringify(payload)

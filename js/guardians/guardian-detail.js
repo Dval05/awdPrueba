@@ -6,7 +6,7 @@ $(function(){
   }
 
   // Cargar info del tutor
-  $.get(API_BASE_URL + "/guardians/get_by_id.php?id=" + guardianId, function(resp){
+  $.get(API_BASE_URL + "/guardians/get_by_id?id=" + guardianId, function(resp){
     if(resp.success && resp.data){
       const g = resp.data;
       $("#guardianFullName").text((g.FirstName || '') + " " + (g.LastName || ''));
@@ -26,7 +26,7 @@ $(function(){
   });
 
   // Cargar estudiantes vinculados
-  $.get(API_BASE_URL + "/guardians/students_by_guardian.php?guardianId=" + guardianId, function(resp){
+  $.get(API_BASE_URL + "/guardians/students_by_guardian?guardianId=" + guardianId, function(resp){
     if(resp.success && Array.isArray(resp.data) && resp.data.length){
       let lis = "";
       resp.data.forEach(st => {

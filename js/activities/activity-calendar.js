@@ -20,7 +20,7 @@ $(function(){
     locale: 'es',
     eventLimit: true,
     events: function(start, end, timezone, callback) {
-      $.get("../../php/activities/get_all.php", function(resp){
+      $.get(API_BASE_URL+"/activities", function(resp){
         if(resp.success && Array.isArray(resp.data)){
           const events = resp.data.map(function(a){
             return {

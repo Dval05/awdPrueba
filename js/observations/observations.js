@@ -27,7 +27,7 @@ $(function() {
 
   // Carga todas las observaciones
   function loadObservations() {
-    $.get("../../php/observations/get_all.php", function(resp) {
+    $.get(API_BASE_URL+"/observations", function(resp) {
       if(resp.success && Array.isArray(resp.data)) {
         renderObservationsTable(resp.data);
       }
@@ -39,7 +39,7 @@ $(function() {
     let id = $(this).data("id");
     if(confirm("¿Eliminar observación?")) {
       $.ajax({
-        url: "../../php/observations/delete.php",
+        url: API_BASE_URL+"/observations/delete",
         method: "POST",
         contentType: "application/json",
         data: JSON.stringify({ObservationID: id}),
@@ -55,7 +55,7 @@ $(function() {
   // Abre el modal con los datos cargados
   $("#observationsTableBody").on("click", ".btn-edit", function() {
     let id = $(this).data("id");
-    $.get("../../php/observations/get_all.php", function(resp) {
+    $.get(API_BASE_URL+"/observations", function(resp) {
       if(resp.success && Array.isArray(resp.data)) {
         let ob = resp.data.find(x => x.ObservationID == id);
         if (ob) {
@@ -79,7 +79,7 @@ $(function() {
       IsPrivate: $("#editIsPrivate").is(":checked") ? 1 : 0
     };
     $.ajax({
-      url: "../../php/observations/update.php",
+      url: API_BASE_URL+"/observations/update",
       method: "POST",
       contentType: "application/json",
       data: JSON.stringify(data),
@@ -106,7 +106,7 @@ $(function() {
     // Prepara payload desde los inputs
     // ...
     $.ajax({
-      url: "../../php/observations/create.php",
+      url: API_BASE_URL+"/observations/create",
       method: "POST",
       contentType: "application/json",
       data: JSON.stringify(payload),

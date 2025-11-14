@@ -22,7 +22,7 @@ $("#addStudentForm").on("submit", function(e){
     };
 
     $.ajax({
-        url: API_BASE_URL + "/students/create.php",
+        url: API_BASE_URL + "/students",
         method: "POST",
         contentType: "application/json",
         data: JSON.stringify(data),

@@ -15,7 +15,7 @@ $(function(){
   });
 
   function loadGrades() {
-    $.get(API_BASE_URL+"/grades/get_all.php", function(d){
+    $.get(API_BASE_URL+"/grades", function(d){
       let o='<option value="">Todos</option>';
       if(d.success && Array.isArray(d.data)){
         d.data.forEach(function(g){
@@ -33,7 +33,7 @@ $(function(){
       type: $("#filterType").val(),
       gender: $("#filterGender").val()
     };
-    $.get(API_BASE_URL+"/students/get_all.php", p, function(r){
+    $.get(API_BASE_URL+"/students", p, function(r){
       let b="";
       if(r.success && Array.isArray(r.data) && r.data.length){
         r.data.forEach(function(stu){

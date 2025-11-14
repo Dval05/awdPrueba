@@ -1,7 +1,7 @@
 $(function(){
   // Cargar todos los tutores
   function loadGuardians(){
-    $.get(API_BASE_URL + "/guardians/get_all.php", function(resp){
+    $.get(API_BASE_URL + "/guardians", function(resp){
       let html = "";
       if(resp.success && Array.isArray(resp.data)){
         resp.data.forEach(g => {
@@ -34,7 +34,7 @@ $(function(){
   // Opcional: mostrar estudiantes vinculados a un tutor (popup/modal)
   $("#guardiansTableBody").on("click", ".show-students", function(){
     let guardianId = $(this).data("id");
-    $.get(API_BASE_URL + "/guardians/get_by_guardian.php?guardianId=" + guardianId, function(resp){
+    $.get(API_BASE_URL + "/guardians/students_by_guardian?guardianId=" + guardianId, function(resp){
       // Muestra los estudiantes vinculados al tutor en un alert/simple modal
       if(resp.success && Array.isArray(resp.data)){
         let info = resp.data.map(stu => `${stu.FirstName} ${stu.LastName}`).join(", ");

@@ -2,7 +2,7 @@ $(function() {
   requireAuth();
 
   // Cambia este endpoint si tienes filtro por activityID
-  const ENDPOINT = "../../php/activities/get_media.php";
+  const ENDPOINT = API_BASE_URL+"/activities/get_media";
 
   // Cargar todos los archivos/media de actividades (o de una en particular si tienes el parámetro)
   function loadMediaGallery() {

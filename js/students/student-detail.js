@@ -7,7 +7,7 @@ $(function() {
   }
 
   function loadStudentDetail() {
-    $.get(API_BASE_URL + "/students/get_by_id.php?id=" + studentId, function(resp){
+    $.get(API_BASE_URL + "/students/" + studentId, function(resp){
       if(resp.success && resp.data){
         const s = resp.data;
         $("#studentFullName").text((s.FirstName || "") + " " + (s.LastName || ""));
@@ -64,8 +64,8 @@ $(function() {
   $("#btnDeleteStudent").on("click", function(){
     if(confirm("¿Seguro que deseas eliminar este estudiante?")){
       $.ajax({
-        url: API_BASE_URL + "/students/delete.php",
-        method: "POST",
+        url: API_BASE_URL + "/students/" + studentId,
+        method: "DELETE",
         contentType: "application/json",
         data: JSON.stringify({ StudentID: studentId }),
         success: function(resp){
@@ -81,7 +81,7 @@ $(function() {
   });
 
   function loadGuardians(){
-    $.get(API_BASE_URL + "/guardians/get_by_student.php?studentId=" + studentId, function(resp){
+    $.get(API_BASE_URL + "/guardians/by-student/" + studentId, function(resp){
       let b = "";
       if(resp.success && Array.isArray(resp.data) && resp.data.length){
         resp.data.forEach(g => {
@@ -133,7 +133,7 @@ $(function() {
     };
 
     $.ajax({
-      url: API_BASE_URL + "/guardians/create.php",
+      url: API_BASE_URL + "/guardians",
       method: "POST",
       contentType: "application/json",
       data: JSON.stringify(data),
@@ -141,7 +141,7 @@ $(function() {
         if (resp.success) {
           // Vincula el tutor nuevo e hijo SÓLO aquí
           $.ajax({
-            url: API_BASE_URL + "/guardians/link_to_student.php",
+            url: API_BASE_URL + "/guardians/" + (resp.GuardianID || resp.id) + "/students",
             method: "POST",
             contentType: "application/json",
             data: JSON.stringify({
@@ -175,7 +175,7 @@ $(function() {
   });
 
   function loadGuardians(){
-  $.get(API_BASE_URL + "/guardians/get_by_student.php?studentId=" + studentId, function(resp){
+  $.get(API_BASE_URL + "/guardians/by-student/" + studentId, function(resp){
     let b = "";
     if(resp.success && Array.isArray(resp.data) && resp.data.length){
       resp.data.forEach(g => {

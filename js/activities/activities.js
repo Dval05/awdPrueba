@@ -1,7 +1,7 @@
 $(function() {
   // Cargar opciones de grado (antes de mostrar el modal)
   function loadGrades(selectedId) {
-    $.get("../../php/grades/get_all.php", function(resp) {
+    $.get(API_BASE_URL+"/grades", function(resp) {
       let html = `<option value="">-- Seleccione --</option>`;
       if(resp.success && Array.isArray(resp.data)) {
         resp.data.forEach(g => {
@@ -14,7 +14,7 @@ $(function() {
 
   // Cargar empleados/docentes
   function loadTeachers(selectedId) {
-    $.get("../../php/employees/get_all.php", function(resp){
+    $.get(API_BASE_URL+"/employees", function(resp){
       let html = `<option value="">-- Sin asignar --</option>`;
       if(resp.success && Array.isArray(resp.data)) {
         resp.data.forEach(t => {
@@ -58,10 +58,10 @@ $(function() {
     let url, msgOk;
     if (id) {
       payload.ActivityID = id;
-      url = "../../php/activities/update.php";
+      url = API_BASE_URL+"/activities/update";
       msgOk = "Actividad actualizada.";
     } else {
-      url = "../../php/activities/create.php";
+      url = API_BASE_URL+"/activities/create";
       msgOk = "Actividad creada correctamente.";
     }
     $.ajax({
@@ -83,7 +83,7 @@ $(function() {
 
   // Listar actividades
   function loadActivities() {
-    $.get("../../php/activities/get_all.php", function(resp){
+    $.get(API_BASE_URL+"/activities", function(resp){
       let html = "";
       if(resp.success && Array.isArray(resp.data)) {
         resp.data.forEach(a => {
@@ -119,8 +119,8 @@ $(function() {
   // Si es edición:
   let isEdit = !!$("#ActivityID").val();
   let url = isEdit 
-    ? "../../php/activities/update.php" 
-    : "../../php/activities/create.php";
+  ? API_BASE_URL+"/activities/update" 
+  : API_BASE_URL+"/activities/create";
   
   $.ajax({
     url: url,
@@ -143,7 +143,7 @@ $(function() {
   // Acción editar
   $("#activitiesTableBody").on("click", ".btn-edit", function() {
     let id = $(this).data("id");
-    $.get("../../php/activities/get_by_id.php?id=" + id, function(resp){
+    $.get(API_BASE_URL+"/activities/get_by_id?id=" + id, function(resp){
       if(resp.success && resp.data){
         let a = resp.data;
         $("#ActivityID").val(a.ActivityID);
@@ -172,7 +172,7 @@ $(function() {
     let id = $(this).data("id");
     if(confirm("¿Eliminar actividad?")) {
       $.ajax({
-        url: "../../php/activities/delete.php",
+        url: API_BASE_URL+"/activities/delete",
         method: "POST",
         contentType: "application/json",
         data: JSON.stringify({ ActivityID: id }),

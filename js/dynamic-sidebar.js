@@ -6,7 +6,7 @@ $(function() {
     }
 
     $.ajax({
-        url: API_BASE_URL + "/users/get_sidebar_links.php",
+        url: API_BASE_URL + "/users/get_sidebar_links",
         method: "GET",
         headers: {
             "Authorization": "Bearer " + token,

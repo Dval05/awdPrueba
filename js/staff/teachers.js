@@ -1,6 +1,6 @@
 $(function(){
   requireAuth();
-  $.get(API_BASE_URL+"/employees/get_all.php",d=>{
+  $.get(API_BASE_URL+"/employees",d=>{
     let b="";
     if(d.success&&d.data.length){
       d.data.forEach(e=>{

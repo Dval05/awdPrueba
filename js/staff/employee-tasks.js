@@ -2,7 +2,7 @@ $(function(){
   requireAuth();
   const urlParams=new URLSearchParams(window.location.search);
   const empId=urlParams.get('empId');
-  $.get(API_BASE_URL+"/employees/get_tasks.php",{empId:empId},d=>{
+  $.get(API_BASE_URL+"/employees/"+empId+"/tasks",d=>{
     let b="";
     if(d.success&&d.data.length){
       d.data.forEach(t=>{

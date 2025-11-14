@@ -7,7 +7,7 @@ $(function(){
   }
 
   // Cargar datos en el formulario al llegar a la edición
-  $.get(API_BASE_URL + "/guardians/get_by_id.php?id=" + guardianId, function(resp){
+  $.get(API_BASE_URL + "/guardians/get_by_id?id=" + guardianId, function(resp){
     if(resp.success && resp.data){
       const g = resp.data;
       $("#GuardianID").val(g.GuardianID);
@@ -52,7 +52,7 @@ $(function(){
     };
 
     $.ajax({
-      url: API_BASE_URL + "/guardians/update.php",
+      url: API_BASE_URL + "/guardians/update",
       method: "POST",
       contentType: "application/json",
       data: JSON.stringify(data),
