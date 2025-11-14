@@ -4,6 +4,26 @@
 - **Base de datos**: PostgreSQL gestionado por Supabase.
 - **Despliegue**: Render Web Service usando `render.yaml`.
 
+## 🚀 Integración Supabase JavaScript
+
+Este proyecto incluye integración completa con Supabase usando JavaScript:
+
+- 📖 **[README_SUPABASE.md](./README_SUPABASE.md)** - Documentación completa de integración
+- ⚡ **[QUICKSTART_SUPABASE.md](./QUICKSTART_SUPABASE.md)** - Guía rápida de inicio
+- 💻 **[HTML/supabase-example.html](./HTML/supabase-example.html)** - Ejemplo interactivo funcional
+
+### Configuración Rápida
+
+**Para frontend (sitio estático):**
+- Usa `js/env.js` que ya contiene tus credenciales de Supabase
+- Incluye el SDK desde CDN: `https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2`
+- Ver ejemplo completo en `HTML/supabase-example.html`
+
+**Para backend (Node.js):**
+- Usa `server/supabase.js` como cliente centralizado
+- Ver ejemplos en `server/routes/supabase-examples.js`
+- Endpoints de ejemplo: `/api/supabase-examples/health`
+
 **Requisitos**
 - Node.js 18+
 - Cuenta y proyecto en Supabase
